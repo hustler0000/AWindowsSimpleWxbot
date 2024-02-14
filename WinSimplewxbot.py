@@ -33,13 +33,13 @@ class MSG(BaseModel):
     is_self: bool
     is_group: bool
 
-def kickout():
+def kickout():  # 踢人功能定义
     wxids=kickoutnotice(say="以上成员因为本月未发言被移除出群，希望在我看不见的地方，你也在努力哦，让我们江湖再见！")
     jspayload = {"roomid": "YourRoomID", "wxids": wxids}
     url1 = "http://127.0.0.1:9999/chatroom-member"
     requests.delete(url=url1, json=jspayload)
 
-def kickoutnotice(say):
+def kickoutnotice(say):  # 踢人提醒功能定义
     conn1 = sl.connect('menbers.db')
     cursor1 = conn1.cursor()
     url1 = "http://127.0.0.1:9999/chatroom-member?roomid=YourRoomID"
@@ -148,7 +148,7 @@ async def shutdown_event():
 async def check():
     a="success!"
     url1 = "http://127.0.0.1:9999/text"
-    jspayload = {"msg": "I'm still alive!(controled by api)", "receiver": "YourWXID"}
+    jspayload = {"msg": "I'm still alive!(controled by api)", "receiver": "YourWXID"}  # 主动get请求此接口后会返回存活信息，并向相应微信账号发送一条存活消息
     requests.post(url1, json=jspayload, headers=headers)
     return a
 
@@ -229,7 +229,7 @@ async def recv_msg(msg:MSG):
             jsonpayload = {"path": "all_menbers.txt", "receiver": msg.roomid}
             requests.post(url, json=jsonpayload, headers=headers)
             words="以上是大家的发言时间记录，请大家踊跃发言，一起成长呀"
-        if(cmd=="feedback"):
+        if(cmd=="feedback"): # 反馈功能处
             words="群内的"+name+"发送了反馈，内容为"+args+"，请迅速处理!"
             url = "http://127.0.0.1:9999/text"
             jsonpayload = {"msg": words, "receiver": "YourWXID"}
