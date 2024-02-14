@@ -1,3 +1,5 @@
+# 鸣谢
+感谢xiaozhao在测试过程的大力协助，这里是他的博客：https://aaaaaaamua.github.io/
 # WindowsSimpleWxbot
 ```
 基于https://github.com/lich0821/WeChatFerry
@@ -18,6 +20,7 @@ feedparser，bs4和requests库可装可不装，项目中是为了实现定时�
 ```shell
 git clone https://github.com/hustler0000/AWindowsSimpleWxbot
 ```
+机器人还需要特定版本的PC微信，请到release处下载安装
 # 初始化
 在使用机器人之前，我们需要有一个微信账号来运行机器人，建议使用小号或者直接新注册一个微信账号，建议这个机器人账号添加常用微信号为好友，方便机器人通知反馈。运行机器人的账号必须实名，否则无法登录，也无法使用微信机器人，这是腾讯的限制，与项目无关
 ## 修改主程序
