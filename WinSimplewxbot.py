@@ -140,10 +140,6 @@ async def app_start():
     scheduler.add_job(kickoutnotice(say="以上群成员本月内还未发言，请注意哦！"), 'cron', month='*',day=25) # 每月25号提醒未发言成员
     scheduler.start()
 
-@app.on_event("shutdown")
-async def shutdown_event():
-    scheduler.shutdown()
-
 @app.get("/check")
 async def check():
     a="success!"
