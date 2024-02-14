@@ -29,7 +29,7 @@ git clone https://github.com/hustler0000/AWindowsSimpleWxbot
 将项目克隆到服务器后，用vim或nano等文本编辑器打开WinSimplewxbot.py进行修改：
 在程序第36和42行附近的踢人和踢人通知功能处，将所有的YourWXID和YourRoomID修改为相应的用户ID和群ID
 在程序第137行附近，可以调整自动任务的执行时间，比如seconds=1，minutes=1，hours=1，day=1等
-找到程序第232行附近，即"feedback"功能处，将所有的YourWXID和YourRoomID修改为相应的用户ID和群ID
+找到程序第228行附近，即"feedback"功能处，将所有的YourWXID和YourRoomID修改为相应的用户ID和群ID
 ```
 # 主程序
 该机器人适用于Windows服务器环境，linux服务器请看https://github.com/hustler0000/AWindowsSimpleWxbot
