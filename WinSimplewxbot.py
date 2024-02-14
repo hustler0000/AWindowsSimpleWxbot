@@ -34,15 +34,15 @@ class MSG(BaseModel):
     is_group: bool
 
 def kickout():
-    wxids=kickoutnotice(say="以上同学因为本月未发言被移除出群，想再次进群可以练习钘哥说明情况，希望在我看不见的地方，你也在努力哦，让我们江湖再见！")
-    jspayload = {"roomid": "34629253960@chatroom", "wxids": wxids}
+    wxids=kickoutnotice(say="以上成员因为本月未发言被移除出群，希望在我看不见的地方，你也在努力哦，让我们江湖再见！")
+    jspayload = {"roomid": "YourRoomID", "wxids": wxids}
     url1 = "http://127.0.0.1:9999/chatroom-member"
     requests.delete(url=url1, json=jspayload)
 
 def kickoutnotice(say):
     conn1 = sl.connect('menbers.db')
     cursor1 = conn1.cursor()
-    url1 = "http://127.0.0.1:9999/chatroom-member?roomid=34629253960%40chatroom"
+    url1 = "http://127.0.0.1:9999/chatroom-member?roomid=YourRoomID"
     res = requests.get(url=url1)
     res = json.loads(res.text)
     res = res.get("data")
@@ -76,10 +76,13 @@ def kickoutnotice(say):
     conn1.close()
     url1="http://127.0.0.1:9999/text"
     word=word+say
-    jspayload = {"msg": word, "receiver": "34629253960@chatroom","aters":wxids}
+    jspayload = {"msg": word, "receiver": "YourRoomID","aters":wxids}
     headers = {"content-type": "application/json"}
     requests.post(url1, json=jspayload, headers=headers)
     return wxids
+
+'''
+此处利用了feedparser和bs4等库，实现了定时推送rss和网站最新文章的功能，可以参考设计自己的定时任务，示例的rss链接文件也放到项目中了
 
 def getrss(strings,url):
     d=feedparser.parse(url)
@@ -118,21 +121,23 @@ def roomdailynews():
         count=count+1
     news=news+"以上就是今早的新内容，一起来学习呀！"
     url1 = 'http://127.0.0.1:9999/text'
-    jspayload = {"msg":news,"receiver":"34629253960@chatroom"}
+    jspayload = {"msg":news,"receiver":"YourRoomID"}
     requests.post(url1,json=jspayload,headers=headers)
+'''
 
 def wxautocheck():
     url1 = "http://127.0.0.1:9999/text"
-    jspayload = {"msg": "I'm still alive!(auto send)", "receiver": "wxid_m8k6ethe81ib32"}
+    jspayload = {"msg": "I'm still alive!(auto send)", "receiver": "YourWXID"}
     requests.post(url1, json=jspayload, headers=headers)
 
+# 上方代码作用为自动发送存活信息到指定微信好友处
 
 @app.on_event("startup")
 async def app_start():
-    scheduler.add_job(kickout, 'cron', month='*',day='last')
-    scheduler.add_job(roomdailynews, 'cron', hour=7)
-    scheduler.add_job(wxautocheck, 'cron', hour='*')
-    scheduler.add_job(kickoutnotice(say="以上群成员本月内还未发言，请注意哦！"), 'cron', month='*',day=25)
+    scheduler.add_job(kickout, 'cron', month='*',day='last') # 每月最后一天自动清除未发言成员
+    #scheduler.add_job(roomdailynews, 'cron', hour=7) # 每天早上7点自动推送文章
+    scheduler.add_job(wxautocheck, 'cron', hour='*')  # 自动发送存活信息，每整点执行一次
+    scheduler.add_job(kickoutnotice(say="以上群成员本月内还未发言，请注意哦！"), 'cron', month='*',day=25) # 每月25号提醒未发言成员
     scheduler.start()
 
 @app.on_event("shutdown")
@@ -143,7 +148,7 @@ async def shutdown_event():
 async def check():
     a="success!"
     url1 = "http://127.0.0.1:9999/text"
-    jspayload = {"msg": "I'm still alive!(controled by api)", "receiver": "wxid_m8k6ethe81ib32"}
+    jspayload = {"msg": "I'm still alive!(controled by api)", "receiver": "YourWXID"}
     requests.post(url1, json=jspayload, headers=headers)
     return a
 
@@ -162,7 +167,7 @@ async def recv_msg(msg:MSG):
     conn = sl.connect('menbers.db')
     cursor = conn.cursor()
     if(msg.sender=="" and msg.content.find("加入了群聊")!=-1):
-        words="欢迎新成员加入HackTB实验室的大家庭，不如先自我介绍一下吧！以下是本实验室守则，请仔细阅读哦！\n\n实验室规章制度：\n0 在校的同学进群后请自觉介绍自己\n1 养成提出高质量问题的习惯，还有乐于和高质量回应群友提问的习惯\n2 多共享有价值的视频，技术或工具\n3 本群主要方向是SRC和渗透，其他技术也欢迎\n4 要经常分享学习到的知识当巩固练习\n5 保持活跃度，回答or提问 长时间不出现或者敷衍了事就移出\n钘哥的主页:dgut.uk\n\n实验室的其他资源请阅读群公告，希望以后我们能一起成长共同进步哦！\n\n@我输入help可以呼出我的帮助菜单"
+        words="欢迎新成员加入本群的大家庭，不如先自我介绍一下吧！\n\n@我输入help可以呼出我的帮助菜单"
         url = "http://127.0.0.1:9999/text"
         jsonpayload = {"msg": words, "receiver": msg.roomid}
         headers = {"content-type": "application/json"}
@@ -184,7 +189,7 @@ async def recv_msg(msg:MSG):
         if(cmd=="check"):
             words="I'm still alive!"
         if(cmd=="help"):
-            words="我是Scr1ptKidB0t，我会默默记下大家的最后发言时间\n@我发消息可以触发指令，大家@我的时候要我回复了才能继续@哦：\n\nhelp 显示本帮助文档\nlast 显示本人最后发言时间\nsearch 路人甲,路人乙 输出一个或多个成员的最后发言时间的最后发言时间，要搜索的每个成员之间用英文逗号隔开\nall 输出一个文件，里面是所有人的最后发言时间\ncheck 检查机器人存活状态\nfeedback 反馈内容 发送反馈\n\n项目地址：https://github.com/hustler0000/AWindowsSimpleWxbot\n\n注意！在群里要积极发言哦！每个月25号会在群内通知这个月还没有发言过的同学，每个月最后一天清除群内未发言同学，希望大家珍惜在群里的机会呀！\n\n希望大家珍惜我，不要@我刷屏，不要连续@我，玩坏了掉线了及时告知我的主人，希望能和大家一起进步呀"
+            words="我是群内机器人，我会默默记下大家的最后发言时间\n@我发消息可以触发指令，大家@我的时候要我回复了才能继续@哦：\n\nhelp 显示本帮助文档\nlast 显示本人最后发言时间\nsearch 路人甲,路人乙 输出一个或多个成员的最后发言时间的最后发言时间，要搜索的每个成员之间用英文逗号隔开\nall 输出一个文件，里面是所有人的最后发言时间\ncheck 检查机器人存活状态\nfeedback 反馈内容 发送反馈\n\n项目地址：https://github.com/hustler0000/AWindowsSimpleWxbot\n\n注意！在群里要积极发言哦！每个月25号会在群内通知这个月还没有发言过的同学，每个月最后一天清除群内未发言同学，希望大家珍惜在群里的机会呀！\n\n希望大家珍惜我，不要@我刷屏，不要连续@我，玩坏了掉线了及时告知我的主人，希望能和大家一起进步呀"
         if(cmd=="last"):
             sql="select last_time from POST where wxid='%s'" % (msg.sender)
             cursor.execute(sql)
@@ -225,9 +230,9 @@ async def recv_msg(msg:MSG):
             requests.post(url, json=jsonpayload, headers=headers)
             words="以上是大家的发言时间记录，请大家踊跃发言，一起成长呀"
         if(cmd=="feedback"):
-            words="实验室的"+name+"发送了反馈，内容为"+args+"，请迅速处理!"
+            words="群内的"+name+"发送了反馈，内容为"+args+"，请迅速处理!"
             url = "http://127.0.0.1:9999/text"
-            jsonpayload = {"msg": words, "receiver": "wxid_m8k6ethe81ib32"}
+            jsonpayload = {"msg": words, "receiver": "YourWXID"}
             headers = {"content-type": "application/json"}
             requests.post(url, json=jsonpayload, headers=headers)
             words=name+"，你的反馈已收到，感谢你的支持！"
