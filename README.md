@@ -6,11 +6,8 @@
 一个可以记录和查询群员最后发言时间，自动提醒和移除未发言群员的简单微信机器人
 ```
 # 安装
-首先安装python以及一些必要组件：
-```shell
-sudo apt-get update
-sudo apt-get install python-is-python3 python-pip git
-```
+首先先在python官网  https://www.python.org/  下载安装windows版本的python和pip
+
 pip安装需要的库：
 ```shell
 python -m pip install fastapi uvicorn python-multipart apscheduler pydantic wcfhttp wcferry -i https://pypi.tuna.tsinghua.edu.cn/simple
