@@ -29,7 +29,7 @@ git clone https://github.com/hustler0000/AWindowsSimpleWxbot
 找到程序第228行附近，即"feedback"功能处，将所有的YourWXID和YourRoomID修改为相应的用户ID和群ID
 ```
 # 主程序
-该机器人适用于Windows服务器环境，linux服务器请看https://github.com/hustler0000/AWindowsSimpleWxbot
+该机器人适用于Windows服务器环境，linux服务器请看https://github.com/hustler0000/ALinuxSimpleWxbot
 ## 启动
 使用命令
 ```cmd
